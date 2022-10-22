@@ -3,15 +3,26 @@
 
 const socket = io("ws://localhost:3000");
 
+	
+
 // receive a message from the server
 socket.on("hello from server", (...args) => {
 		console.log("got a hello from the server");
 		// send a message to the server
 		socket.emit("hello from client", "client data");
 });
+
+
+	window.onload = () => {
+			const canvas = document.getElementsByTagName("canvas")[0];
+			// do stuff here
+			const ctx = canvas.getContext("2d");
+			ctx.beginPath();
+			ctx.rect(20, 20, 150, 100);
+			ctx.stroke();
+	}
 	
 </script>
 
+<canvas>
 
-
-hello world
