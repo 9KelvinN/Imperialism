@@ -1,4 +1,16 @@
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script>
 
+const socket = io("ws://localhost:3000");
+
+// receive a message from the server
+socket.on("hello from server", (...args) => {
+		console.log("got a hello from the server");
+		// send a message to the server
+		socket.emit("hello from client", "client data");
+});
+	
+</script>
 
 
 
