@@ -17,3 +17,67 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3000);
+
+const waterTile = {
+	isWater: true,
+	owner: -1,
+	troopCount: 0
+}
+const landTile = {
+	isWater: false,
+	owner: -1,
+	troopCount: 0
+}
+const player1Tile = {
+	isWater: false,
+	owner: 1,
+	troopCount: 1
+}
+const player2Tile = {
+	isWater: false,
+	owner: 2,
+	troopCount: 1
+}
+
+const twoPlayerBoard = [
+	[ 1, 1,-1, 0, 0, 0,-1, 0, 0, 0],
+	[ 1, 1,-1, 0, 0, 0, 0,-1, 0, 0],
+	[-1,-1,-1,-1,-1,-1,-1,-1,-1, 0],
+	[ 0, 0,-1,-1, 0, 0,-1,-1, 0,-1],
+	[ 0, 0,-1, 0, 0, 0, 0,-1, 0, 0],
+	[ 0, 0,-1, 0, 0, 0, 0,-1, 0, 0],
+	[-1, 0,-1,-1, 0, 0,-1,-1, 0, 0],
+	[ 0,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+	[ 0, 0,-1, 0, 0, 0, 0,-1, 2, 2],
+	[ 0, 0, 0,-1, 0, 0, 0,-1, 2, 2],
+]
+
+function generateBoard(){
+	const board = [];
+	const boardLen = twoPlayerBoard.length
+	for (var i=0; i< boardLen; i++){
+		for (var j=0; j< boardLen; j++){
+			var newTile;
+			switch (twoPlayerBoard[i][j]){
+				case -1:
+					newTile = {...waterTile};
+					break;
+				case 0:
+					newTile = {...landTile};
+					break;
+				case 1:
+					newTile = {...player1Tile};
+					break;
+				case 2:
+					newTile = {...player2Tile};
+					break;					
+			}
+			board[i][j] = newTile;
+		}
+	}
+}
+
+var isOdd
+function newMove(moves, curBoard){
+	
+}
