@@ -21,26 +21,42 @@ server.listen(3000);
 const waterTile = {
 	isWater: true,
 	owner: -1,
-	troopCount: 0
+	troopCount: 0,
+	isCapitol: false
 }
 const landTile = {
 	isWater: false,
 	owner: -1,
-	troopCount: 0
+	troopCount: 0,
+	isCapitol: false
 }
 const player1Tile = {
 	isWater: false,
 	owner: 0,
-	troopCount: 1
+	troopCount: 1,
+	isCapitol: false
+}
+const player1Capitol = {
+	isWater: false,
+	owner: 0,
+	troopCount: 1,
+	isCapitol: true
 }
 const player2Tile = {
 	isWater: false,
 	owner: 1,
-	troopCount: 1
+	troopCount: 1,
+	isCapitol: false
+}
+const player2Capitol = {
+	isWater: false,
+	owner: 1,
+	troopCount: 1,
+	isCapitol: true
 }
 
 const twoPlayerBoard = [
-	[ 1, 1,-1, 0, 0, 0,-1, 0, 0, 0],
+	[10, 1,-1, 0, 0, 0,-1, 0, 0, 0],
 	[ 1, 1,-1, 0, 0, 0, 0,-1, 0, 0],
 	[-1,-1,-1,-1,-1,-1,-1,-1,-1, 0],
 	[ 0, 0,-1,-1, 0, 0,-1,-1, 0,-1],
@@ -49,7 +65,7 @@ const twoPlayerBoard = [
 	[-1, 0,-1,-1, 0, 0,-1,-1, 0, 0],
 	[ 0,-1,-1,-1,-1,-1,-1,-1,-1,-1],
 	[ 0, 0,-1, 0, 0, 0, 0,-1, 2, 2],
-	[ 0, 0, 0,-1, 0, 0, 0,-1, 2, 2],
+	[ 0, 0, 0,-1, 0, 0, 0,-1, 2,20],
 ]
 
 var moveCount = 0;
@@ -76,7 +92,13 @@ function generateBoard(){
 					break;
 				case 2:
 					newTile = {...player2Tile};
-					break;					
+					break;
+				case 10:
+					newTile = {...player1Capitol};
+					break;	
+				case 20:
+					newTile = {...player2Capitol};
+					break;				
 			}
 			board[i][j] = newTile;
 		}
@@ -104,7 +126,7 @@ function processMoves(moves){
 		}
 	}
 	for (var i = 0; i < playerCount; i++){
-		deployableTroops[i]+= 3 * completedIslands[i];
+		deployableTroops[i]+= 2 + 3 * completedIslands[i];
 	}
 	differences.push(deployableTroops);
 	// last param will be updated deployables. rest will be List of moves.
@@ -136,6 +158,9 @@ function processMove(move, curPlayer, differences){
 					if (isCompletedIsland({x: move.destTile.x, y:move.destTile.y}, curPlayer)){
 						completedIslands[curPlayer]++;
 					}
+					if(board[move.destTile.x][move.destTile.y].isCapitol){
+						gameOver(curPlayer);
+					}
 				} else {
 					board[move.destTile.x][move.destTile.y].troopCount = troopsToMove - board[move.destTile.x][move.destTile.y].troopCount;
 					board[move.destTile.x][move.destTile.y].owner = curPlayer;
@@ -151,7 +176,9 @@ function processMove(move, curPlayer, differences){
 
 }
 
-
+// function coalesce(eliminee, eliminator){
+	
+// }
 
 function isCompletedIsland(coord, curPlayer){
 	const boardLen = board.length
@@ -188,4 +215,8 @@ function isOutOfBounds(coord){
 		return true;
 	}
 	return false;
+}
+
+function gameOver(winner){
+
 }
