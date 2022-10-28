@@ -1,22 +1,25 @@
+const http = require('http');
 const express = require('express');
+const socketIO = require('socket.io');
 
-const app = express();
-app.use(express.static('public'));
+const port = 3000
+let app = express();
+let server = http.createServer(app);
 
-const server = require('http').createServer(app);
-const io     = require('socket.io')(server);
+app.use(express.static("public"));
+
+let io = socketIO(server);
 
 io.on("connection", (socket) => {
-		// send a message to the client
-		socket.emit("hello from server", { whatever: "some data" });
+	// send a message to the client
+	socket.emit("boardGenerated", generateBoard());
 
-		// receive a message from the client
-		socket.on("hello from client", (...args) => {
-				console.log(`got hello from client ${args}`);
-		});
+	// receive a message from the client
+	socket.on("hello from client", (...args) => {
+			console.log(`got hello from client ${args}`);
+	});
 });
 
-server.listen(3000);
 
 const waterTile = {
 	isWater: true,
@@ -69,7 +72,7 @@ const twoPlayerBoard = [
 ]
 
 var moveCount = 0;
-var board = [];
+var board = [[]];
 const playerCount = 2;
 var deployableTroops = [];
 var completedIslands = [];
@@ -78,6 +81,7 @@ var troopsPerCompletedIsland = 3;
 function generateBoard(){
 	const boardLen = twoPlayerBoard.length
 	for (var i=0; i< boardLen; i++){
+		var newTiles = [];
 		for (var j=0; j< boardLen; j++){
 			var newTile;
 			switch (twoPlayerBoard[i][j]){
@@ -100,8 +104,9 @@ function generateBoard(){
 					newTile = {...player2Capitol};
 					break;				
 			}
-			board[i][j] = newTile;
+			newTiles[j]= newTile;
 		}
+		board[i] = newTiles;
 	}
 	for (var i = 0; i < playerCount; i++){
 		deployableTroops[i] = 5;
@@ -109,6 +114,7 @@ function generateBoard(){
 	for (var i = 0; i < playerCount; i++){
 		completedIslands[i] = 1;
 	}
+	return {board: board, deployableTroops: deployableTroops};
 }
 
 
@@ -126,7 +132,7 @@ function processMoves(moves){
 		}
 	}
 	for (var i = 0; i < playerCount; i++){
-		deployableTroops[i]+= 2 + 3 * completedIslands[i];
+		deployableTroops[i]+= 2 + troopsPerCompletedIsland * completedIslands[i];
 	}
 	differences.push(deployableTroops);
 	// last param will be updated deployables. rest will be List of moves.
@@ -220,3 +226,7 @@ function isOutOfBounds(coord){
 function gameOver(winner){
 
 }
+
+server.listen(port, () => {
+    console.log('listening on *:' + port);
+});
